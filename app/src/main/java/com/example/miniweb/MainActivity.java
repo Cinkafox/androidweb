@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 textView.setText(main.getOut());
+                qr(getIPAddress(true) + ":" + port);
 
             }
         };
@@ -72,7 +73,24 @@ public class MainActivity extends AppCompatActivity {
         return textView.getText().toString();
     }
 
+    public void qr(String in){
+        QRCodeWriter writer = new QRCodeWriter();
+        try {
+            BitMatrix bitMatrix = writer.encode(in, BarcodeFormat.QR_CODE, 512, 512);
+            int width = bitMatrix.getWidth();
+            int height = bitMatrix.getHeight();
+            Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    bmp.setPixel(x, y, bitMatrix.get(x, y) ? Color.BLACK : Color.WHITE);
+                }
+            }
+            ((ImageView) findViewById(R.id.imageView)).setImageBitmap(bmp);
 
+        } catch (WriterException e) {
+            e.printStackTrace();
+        }
+    }
     public static String getIPAddress(boolean useIPv4) {
         try {
             List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
