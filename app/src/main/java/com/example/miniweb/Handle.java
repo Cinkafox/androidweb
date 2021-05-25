@@ -1,23 +1,36 @@
 package com.example.miniweb;
 
+import android.content.Context;
+import android.util.Log;
+
 import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
 
+@SuppressWarnings("ResultOfMethodCallIgnored")
 public class Handle extends Thread {
     private final Socket socket;
-    private String ldir = android.os.Environment.getExternalStorageState();
+    private Context context;
+    private String ldir;
     private final String absolutedir = ldir;
     private final int port;
     private final String index;
 
-    public Handle(Socket socket,int port,String index) {
+    public Handle(Socket socket, int port, String index, Context context,String ldir) {
         this.socket = socket;
         this.port = port;
         this.index = index;
+        this.context = context;
+        this.ldir = ldir;
     }
 
     public void run(){
+        Log.i("dir",ldir);
+        File[] arr = localFiles();
+        for(File temp:arr){
+            Log.i("File",temp.getName() + " " + temp.getAbsolutePath());
+        }
+
         try{
             Start();
         }catch (IOException e){
@@ -116,6 +129,7 @@ public class Handle extends Thread {
     public static byte[] readFile(String file) throws IOException {
 
         File f = new File(file);
+        Log.i("file exist", String.valueOf(f.exists()));
 
         // work only for 2GB file, because array index can only up to Integer.MAX
 
@@ -147,8 +161,8 @@ public class Handle extends Thread {
         OutputStream output = socket.getOutputStream();
         File file = new File(index);
         String inputurl = getURL(input);
-        ldir = ldir + "\\" + inputurl;
-        System.out.println(socket.getInetAddress() + " :" + inputurl);
+        ldir = ldir + "/" + inputurl;
+        Log.i("ldir",ldir + " " + new File(ldir).exists());
         String type = "html";
         String text;
         if (new File(ldir).exists() && localFiles() != null && getType(inputurl).equalsIgnoreCase("")) {
@@ -161,8 +175,8 @@ public class Handle extends Thread {
                 text = html.getHTML();
                 output.write((SetUp(text.length(),type(type))+ text).getBytes());
             }
-        }else if(!getType(inputurl).equalsIgnoreCase("") && new File(inputurl).exists()){
-            byte[] b = readFile(inputurl);
+        }else if(!getType(inputurl).equalsIgnoreCase("") && new File(ldir).exists()){
+            byte[] b = readFile(ldir);
             output.write(SetUp(b.length,type(getType(inputurl))).getBytes());
             output.write(b);
         }else {

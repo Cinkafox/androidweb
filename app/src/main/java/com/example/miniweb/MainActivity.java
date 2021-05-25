@@ -7,11 +7,17 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.nfc.Tag;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -20,12 +26,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         final Context context = this;
-
         final TextView textView = findViewById(R.id.TextPanel);
         Button button = findViewById(R.id.button);
-        final Main main = new Main();
+        final Main main = new Main(this);
         final TextView textView1 = findViewById(R.id.port);
-        textView.setText("1");
+        textView.setText("Введите порт и запустите!");
         View.OnClickListener oclBtnOk = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -37,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
                     textView.setText(e.getLocalizedMessage());
                 }
                 Toast.makeText(context, port+"", Toast.LENGTH_SHORT).show();
-                main.setPort(port);
+                main.setPort(port,context.getFilesDir().getAbsolutePath());
                 main.start();
                     try {
                         Thread.sleep(2000);

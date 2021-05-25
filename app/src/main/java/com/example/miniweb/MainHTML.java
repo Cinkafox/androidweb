@@ -9,7 +9,7 @@ public class MainHTML {
 
         pre();
         for (File value : file) {
-            String outurl = removeFirstChars(ldir, absolutedir.length()) + "\\" + value.getName();
+            String outurl = removeFirstChars(ldir, absolutedir.length()) + "/" + value.getName();
             if (inputurl.trim().equalsIgnoreCase("")) {
                 outurl = value.getName();
             }

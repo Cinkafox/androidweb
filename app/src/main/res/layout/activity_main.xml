@@ -8,15 +8,15 @@
 
     <TextView
         android:id="@+id/TextPanel"
-        android:layout_width="332dp"
-        android:layout_height="147dp"
+        android:layout_width="350dp"
+        android:layout_height="54dp"
         android:text="Output"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.461"
+        app:layout_constraintHorizontal_bias="0.491"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.11" />
+        app:layout_constraintVertical_bias="0.063" />
 
     <EditText
         android:id="@+id/port"
@@ -26,22 +26,24 @@
         android:ems="10"
         android:inputType="textPersonName"
         android:text="Port"
-        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/TextPanel" />
+        app:layout_constraintTop_toBottomOf="@+id/TextPanel"
+        app:layout_constraintVertical_bias="0.04" />
 
     <Button
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="134dp"
         android:layout_marginBottom="260dp"
         android:text="Button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/TextPanel"
-        app:layout_constraintVertical_bias="0.702" />
+        app:layout_constraintTop_toTopOf="@+id/port"
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
