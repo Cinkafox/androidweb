@@ -12,7 +12,7 @@ public class Handle extends Thread {
     private final Socket socket;
     private Context context;
     private String ldir;
-    private final String absolutedir = ldir;
+    private String absolutedir;
     private final int port;
     private final String index;
 
@@ -22,6 +22,7 @@ public class Handle extends Thread {
         this.index = index;
         this.context = context;
         this.ldir = ldir;
+        absolutedir = ldir;
     }
 
     public void run(){
