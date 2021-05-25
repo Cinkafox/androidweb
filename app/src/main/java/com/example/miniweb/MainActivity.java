@@ -1,31 +1,42 @@
 package com.example.miniweb;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.nfc.Tag;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import com.google.zxing.qrcode.encoder.ByteMatrix;
+
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.util.Collections;
+import java.util.Hashtable;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    Context context;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        final ImageView imageView = findViewById(R.id.imageView);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final Context context = this;
+        context = this;
         final TextView textView = findViewById(R.id.TextPanel);
         Button button = findViewById(R.id.button);
         final Main main = new Main(this);
@@ -41,15 +52,16 @@ public class MainActivity extends AppCompatActivity {
                 } catch (NumberFormatException e) {
                     textView.setText(e.getLocalizedMessage());
                 }
-                Toast.makeText(context, port+"", Toast.LENGTH_SHORT).show();
-                main.setPort(port,context.getFilesDir().getAbsolutePath());
+                Toast.makeText(context, port + "", Toast.LENGTH_SHORT).show();
+                main.setPort(port, context.getFilesDir().getAbsolutePath());
                 main.start();
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    textView.setText(main.getOut());
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                textView.setText(main.getOut());
+
             }
         };
         button.setOnClickListener(oclBtnOk);
@@ -60,7 +72,32 @@ public class MainActivity extends AppCompatActivity {
         return textView.getText().toString();
     }
 
-    private void setText(String in) {
 
+    public static String getIPAddress(boolean useIPv4) {
+        try {
+            List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
+            for (NetworkInterface intf : interfaces) {
+                List<InetAddress> addrs = Collections.list(intf.getInetAddresses());
+                for (InetAddress addr : addrs) {
+                    if (!addr.isLoopbackAddress()) {
+                        String sAddr = addr.getHostAddress();
+                        //boolean isIPv4 = InetAddressUtils.isIPv4Address(sAddr);
+                        boolean isIPv4 = sAddr.indexOf(':') < 0;
+
+                        if (useIPv4) {
+                            if (isIPv4)
+                                return sAddr;
+                        } else {
+                            if (!isIPv4) {
+                                int delim = sAddr.indexOf('%'); // drop ip6 zone suffix
+                                return delim < 0 ? sAddr.toUpperCase() : sAddr.substring(0, delim).toUpperCase();
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception ignored) {
+        } // for now eat exceptions
+        return "";
     }
 }
