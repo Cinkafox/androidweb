@@ -28,9 +28,9 @@ public class Handle extends Thread {
     public void run(){
         Log.i("dir",ldir);
         File[] arr = localFiles();
-        for(File temp:arr){
-            Log.i("File",temp.getName() + " " + temp.getAbsolutePath());
-        }
+        //for(File temp:arr){
+        //    Log.i("File",temp.getName() + " " + temp.getAbsolutePath());
+        //}
 
         try{
             Start();

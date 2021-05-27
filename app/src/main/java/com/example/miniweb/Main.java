@@ -3,6 +3,7 @@ package com.example.miniweb;
 import android.content.Context;
 import android.net.Network;
 import android.util.Log;
+import android.widget.Spinner;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -16,6 +17,7 @@ public class Main extends Thread {
     public String out;
     private Context context;
     public String ldir;
+
 
     public Main(Context context) {
         this.context = context;

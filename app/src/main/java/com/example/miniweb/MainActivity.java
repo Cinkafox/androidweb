@@ -1,15 +1,21 @@
 package com.example.miniweb;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,40 +34,57 @@ import java.util.Hashtable;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
 
     Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        final ImageView imageView = findViewById(R.id.imageView);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = this;
+        final Activity activity = (Activity) context;
         final TextView textView = findViewById(R.id.TextPanel);
         Button button = findViewById(R.id.button);
         final Main main = new Main(this);
         final TextView textView1 = findViewById(R.id.port);
         textView.setText("Введите порт и запустите!");
+        Spinner spinner = findViewById(R.id.spinner);
         View.OnClickListener oclBtnOk = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                textView.setText("test");
-                int port = 8080;
-                try {
-                    port = Integer.parseInt(getText(textView1));
-                } catch (NumberFormatException e) {
-                    textView.setText(e.getLocalizedMessage());
+                int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+                if (permission != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(
+                            activity,
+                            PERMISSIONS_STORAGE,
+                            REQUEST_EXTERNAL_STORAGE
+                    );
+                    textView.setText("Нажмите еще раз");
+                }else {
+                    textView.setText("test");
+                    int port = 8080;
+                    try {
+                        port = Integer.parseInt(getText(textView1));
+                    } catch (NumberFormatException e) {
+                        textView.setText(e.getLocalizedMessage());
+                    }
+                    Toast.makeText(context, port + "", Toast.LENGTH_SHORT).show();
+                    main.setPort(port, android.os.Environment.getExternalStorageDirectory() + "");
+                    main.start();
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    textView.setText(main.getOut());
+                    qr(getIPAddress(true) + ":" + port);
                 }
-                Toast.makeText(context, port + "", Toast.LENGTH_SHORT).show();
-                main.setPort(port, context.getFilesDir().getAbsolutePath());
-                main.start();
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                textView.setText(main.getOut());
-                qr(getIPAddress(true) + ":" + port);
 
             }
         };
