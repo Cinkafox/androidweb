@@ -27,10 +27,10 @@ public class MainHTML {
                 "    <meta charset=\"UTF-8\" />\n" +
                 "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n" +
                 "    <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\" />\n" +
-                "    <title>Texting</title>\n" +
+                "    <title>File explorer</title>\n" +
                 "  </head>\n" +
                 "  <body>\n" +
-                "<h1>Local Files</h1>\n" +
+                "<h1>File explorer</h1>\n" +
                 "<hr>\n";
     }
 

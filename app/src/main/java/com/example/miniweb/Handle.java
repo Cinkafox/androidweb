@@ -157,18 +157,19 @@ public class Handle extends Thread {
         }
     }
 
-    public void Start() throws IOException {
+    private void Start() throws IOException {
         InputStream input = socket.getInputStream();
         OutputStream output = socket.getOutputStream();
-        File file = new File(index);
+
         String inputurl = getURL(input);
         ldir = ldir + "/" + inputurl;
         Log.i("ldir",ldir + " " + new File(ldir).exists());
         String type = "html";
         String text;
-        if (new File(ldir).exists() && localFiles() != null && getType(inputurl).equalsIgnoreCase("")) {
+        if (new File(ldir).isDirectory()) {
+            File file = new File(ldir + "/" + index);
             MainHTML html = new MainHTML(inputurl,ldir,absolutedir,localFiles());
-            if(file.exists()){
+            if(file.exists() && !file.isDirectory()){
                 byte[] b = readFile(file.getName());
                 output.write((SetUp(b.length,type(type))).getBytes());
                 output.write(b);
@@ -176,7 +177,7 @@ public class Handle extends Thread {
                 text = html.getHTML();
                 output.write((SetUp(text.length(),type(type))+ text).getBytes());
             }
-        }else if(!getType(inputurl).equalsIgnoreCase("") && new File(ldir).exists()){
+        }else if(new File(ldir).exists()){
             byte[] b = readFile(ldir);
             output.write(SetUp(b.length,type(getType(inputurl))).getBytes());
             output.write(b);

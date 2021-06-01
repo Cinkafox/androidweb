@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -39,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
+    private boolean on = true;
+    private String ldir = android.os.Environment.getExternalStorageDirectory() + "";
 
     Context context;
 
@@ -49,12 +52,41 @@ public class MainActivity extends AppCompatActivity {
         context = this;
         final Activity activity = (Activity) context;
         final TextView textView = findViewById(R.id.TextPanel);
+        final TextView textInfo = findViewById(R.id.textinfo);
+
         Button button = findViewById(R.id.button);
-        final Main main = new Main(this);
-        final TextView textView1 = findViewById(R.id.port);
-        textView.setText("Введите порт и запустите!");
         Spinner spinner = findViewById(R.id.spinner);
-        View.OnClickListener oclBtnOk = new View.OnClickListener() {
+
+        final Main main = new Main(this,spinner);
+        final TextView textView1 = findViewById(R.id.port);
+
+        textView.setText("Введите порт и запустите!");
+
+        main.selldir(ldir);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+                                              @Override
+                                              public void onItemSelected(AdapterView<?> adapterView, View view,
+                                                                         int position, long id) {
+                                                  Object item = adapterView.getItemAtPosition(position);
+                                                  if (item != null) {
+                                                      Toast.makeText(MainActivity.this, item.toString(),
+                                                              Toast.LENGTH_SHORT).show();
+                                                      ldir = item.toString();
+                                                  }
+
+
+                                              }
+
+                                              @Override
+                                              public void onNothingSelected(AdapterView<?> parent) {
+
+                                              }
+                                          });
+
+
+            View.OnClickListener oclBtnOk = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
@@ -66,7 +98,10 @@ public class MainActivity extends AppCompatActivity {
                             REQUEST_EXTERNAL_STORAGE
                     );
                     textView.setText("Нажмите еще раз");
-                }else {
+                }else if(on) {
+                    main.selldir(ldir);
+                    textInfo.setText("");
+                    on = false;
                     textView.setText("test");
                     int port = 8080;
                     try {
@@ -74,8 +109,9 @@ public class MainActivity extends AppCompatActivity {
                     } catch (NumberFormatException e) {
                         textView.setText(e.getLocalizedMessage());
                     }
+
                     Toast.makeText(context, port + "", Toast.LENGTH_SHORT).show();
-                    main.setPort(port, android.os.Environment.getExternalStorageDirectory() + "");
+                    main.setPort(port);
                     main.start();
                     try {
                         Thread.sleep(2000);
@@ -83,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     textView.setText(main.getOut());
-                    qr(getIPAddress(true) + ":" + port);
+                    qr("http://" + getIPAddress(true) + ":" + port);
                 }
 
             }

@@ -1,10 +1,11 @@
 package com.example.miniweb;
 
 import android.content.Context;
-import android.net.Network;
-import android.util.Log;
+import android.widget.Adapter;
+import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -14,26 +15,37 @@ import java.util.Collections;
 import java.util.List;
 
 public class Main extends Thread {
-    public String out;
+    private String out;
     private Context context;
-    public String ldir;
+    private String ldir;
+    private Spinner spinner;
 
 
-    public Main(Context context) {
+
+    public Main(Context context,Spinner spinner) {
         this.context = context;
+        this.spinner = spinner;
+
+
+    }
+    public void selldir(String ldir){
+        this.ldir = ldir;
+        ArrayAdapter adapter = adapter(localFiles());
+        adapter.setDropDownViewResource(R.layout.list);
+        spinner.setAdapter(adapter);
     }
 
-    public void setPort(int port,String ldir) {
-        this.port = port;this.ldir=ldir;
+    public void setPort(int port) {
+        this.port = port;
     }
 
     public void setIndex(String index) {
         this.index = index;
     }
 
-    public int port;
-    public String index = "";
-    public String ip =getIPAddress(true);
+    private int port;
+    private String index = "";
+    private String ip =getIPAddress(true);
     public void run(){
         try {
             String index = "";
@@ -79,6 +91,19 @@ public class Main extends Thread {
             }
         } catch (Exception ignored) { } // for now eat exceptions
         return "";
+    }
+    private File[] localFiles(){
+        File file = new File(ldir);
+        return file.listFiles();
+    }
+    private ArrayAdapter adapter(File[] file){
+        String[] temp = new String[file.length];
+        int i = 0;
+        for(File st:file){
+            temp[i] = st.getPath();
+            i++;
+        }
+        return new ArrayAdapter<String>(context,R.layout.list,temp);
     }
 
 }
