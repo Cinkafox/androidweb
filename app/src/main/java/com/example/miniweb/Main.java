@@ -4,6 +4,7 @@ import android.content.Context;
 import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,9 +23,12 @@ public class Main extends Thread {
 
 
 
+
+
     public Main(Context context,Spinner spinner) {
         this.context = context;
         this.spinner = spinner;
+
 
 
     }
@@ -39,6 +43,7 @@ public class Main extends Thread {
         this.port = port;
     }
 
+
     public void setIndex(String index) {
         this.index = index;
     }
@@ -51,10 +56,12 @@ public class Main extends Thread {
             String index = "";
             ServerSocket serverSocket = new ServerSocket(port);
             out = "Работает по адрессу http://" + ip + ":" + port ;
+            Logger.setText(out);
 
             while (true) {
                 Socket socket = serverSocket.accept();
                 Handle handle = new Handle(socket, port, index,context,ldir);
+
                 handle.start();
             }
         }catch (IOException e){

@@ -2,6 +2,7 @@ package com.example.miniweb;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.TextView;
 
 import java.io.*;
 import java.net.Socket;
@@ -16,6 +17,7 @@ public class Handle extends Thread {
     private final int port;
     private final String index;
 
+
     public Handle(Socket socket, int port, String index, Context context,String ldir) {
         this.socket = socket;
         this.port = port;
@@ -23,10 +25,12 @@ public class Handle extends Thread {
         this.context = context;
         this.ldir = ldir;
         absolutedir = ldir;
+
     }
 
+
     public void run(){
-        Log.i("dir",ldir);
+        Logger.setText(socket.getInetAddress() + " подключился ко серверу!");
         File[] arr = localFiles();
         //for(File temp:arr){
         //    Log.i("File",temp.getName() + " " + temp.getAbsolutePath());
@@ -35,7 +39,7 @@ public class Handle extends Thread {
         try{
             Start();
         }catch (IOException e){
-            e.printStackTrace();
+            Logger.setText(socket.getInetAddress() + " ошибка!");
         }
     }
 
@@ -165,8 +169,9 @@ public class Handle extends Thread {
         ldir = ldir + "/" + inputurl;
         Log.i("ldir",ldir + " " + new File(ldir).exists());
         String type = "html";
-        String text;
+        String text1;
         if (new File(ldir).isDirectory()) {
+            Logger.setText(socket.getInetAddress() + " зашел в папку:" + ldir);
             File file = new File(ldir + "/" + index);
             MainHTML html = new MainHTML(inputurl,ldir,absolutedir,localFiles());
             if(file.exists() && !file.isDirectory()){
@@ -174,16 +179,18 @@ public class Handle extends Thread {
                 output.write((SetUp(b.length,type(type))).getBytes());
                 output.write(b);
             }else {
-                text = html.getHTML();
-                output.write((SetUp(text.length(),type(type))+ text).getBytes());
+                text1 = html.getHTML();
+                output.write((SetUp(text1.length(),type(type))+ text1).getBytes());
             }
         }else if(new File(ldir).exists()){
+            Logger.setText(socket.getInetAddress() + " Загружает файл:" + new File(ldir).getName());
             byte[] b = readFile(ldir);
             output.write(SetUp(b.length,type(getType(inputurl))).getBytes());
             output.write(b);
         }else {
-            text = "NOT_FOUND";
-            output.write((SetUp(text.length(),type(type))+ text).getBytes());
+            text1 = "NOT_FOUND";
+            Logger.setText(socket.getInetAddress() + " для него ничего не найдено!");
+            output.write((SetUp(text1.length(),type(type))+ text1).getBytes());
         }
         output.flush();
         input.close();

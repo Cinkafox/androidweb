@@ -6,12 +6,11 @@ import androidx.core.app.ActivityCompat;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -21,17 +20,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
-import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
-import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
-import com.google.zxing.qrcode.encoder.ByteMatrix;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Collections;
-import java.util.Hashtable;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -42,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     };
     private boolean on = true;
     private String ldir = android.os.Environment.getExternalStorageDirectory() + "";
+
 
     Context context;
 
@@ -54,16 +50,23 @@ public class MainActivity extends AppCompatActivity {
         final TextView textView = findViewById(R.id.TextPanel);
         final TextView textInfo = findViewById(R.id.textinfo);
 
-        Button button = findViewById(R.id.button);
+        final Button button = findViewById(R.id.button);
+        Button console = findViewById(R.id.Console);
         Spinner spinner = findViewById(R.id.spinner);
 
         final Main main = new Main(this,spinner);
         final TextView textView1 = findViewById(R.id.port);
-
         textView.setText("Введите порт и запустите!");
 
         main.selldir(ldir);
 
+        console.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this,Console.class));
+
+            }
+        });
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
                                               @Override
@@ -102,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
                     main.selldir(ldir);
                     textInfo.setText("");
                     on = false;
+
                     textView.setText("test");
                     int port = 8080;
                     try {
