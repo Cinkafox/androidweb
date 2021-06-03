@@ -166,12 +166,12 @@ public class Handle extends Thread {
         OutputStream output = socket.getOutputStream();
 
         String inputurl = getURL(input);
-        ldir = ldir + "/" + inputurl;
+        ldir = android.os.Environment.getExternalStorageDirectory() + "/" + ldir + "/" + inputurl;
         Log.i("ldir",ldir + " " + new File(ldir).exists());
         String type = "html";
         String text1;
         if (new File(ldir).isDirectory()) {
-            Logger.setText(socket.getInetAddress() + " зашел в папку:" + ldir);
+            Logger.setText(socket.getInetAddress() + Lang.INPAPK + ldir);
             File file = new File(ldir + "/" + index);
             MainHTML html = new MainHTML(inputurl,ldir,absolutedir,localFiles());
             if(file.exists() && !file.isDirectory()){
@@ -183,13 +183,13 @@ public class Handle extends Thread {
                 output.write((SetUp(text1.length(),type(type))+ text1).getBytes());
             }
         }else if(new File(ldir).exists()){
-            Logger.setText(socket.getInetAddress() + " Загружает файл:" + new File(ldir).getName());
+            Logger.setText(socket.getInetAddress() + Lang.LOAD + new File(ldir).getName());
             byte[] b = readFile(ldir);
             output.write(SetUp(b.length,type(getType(inputurl))).getBytes());
             output.write(b);
         }else {
             text1 = "NOT_FOUND";
-            Logger.setText(socket.getInetAddress() + " для него ничего не найдено!");
+            Logger.setText(socket.getInetAddress() + Lang.NOT_FOUND + ldir);
             output.write((SetUp(text1.length(),type(type))+ text1).getBytes());
         }
         output.flush();
