@@ -74,8 +74,10 @@ public class Main extends Thread {
         String[] temp = new String[file.length];
         int i = 0;
         for(File st:file){
-            temp[i] = st.getPath().substring(ldir.length());
-            i++;
+            //if(st.isDirectory()) {
+                temp[i] = st.getPath().substring(ldir.length());
+                i++;
+            //}
         }
         return new ArrayAdapter<String>(context,R.layout.list,temp);
     }

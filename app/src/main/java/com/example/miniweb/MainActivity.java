@@ -51,6 +51,16 @@ public class MainActivity extends AppCompatActivity {
         final Button button = findViewById(R.id.button);
 
         final Spinner spinner = findViewById(R.id.spinner);
+        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                    activity,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
+            textView.setText(Lang.TRY_AGAIN);
+        }
 
         main = new Main(this,spinner);
         final TextView textView1 = findViewById(R.id.port);
@@ -78,16 +88,9 @@ public class MainActivity extends AppCompatActivity {
             View.OnClickListener oclBtnOk = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
-                    if (permission != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(
-                                activity,
-                                PERMISSIONS_STORAGE,
-                                REQUEST_EXTERNAL_STORAGE
-                        );
-                        textView.setText(Lang.TRY_AGAIN);
-                    } else {
+
+
                         if(!off) {
                             main.on();
                             System.out.println("1");
@@ -134,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
 
                     }
 
-                }
+
             };
 
             button.setOnClickListener(oclBtnOk);
